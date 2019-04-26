@@ -44,6 +44,7 @@ I'll address this when Cybears release the CTF publicly.
 
 If you want to attempt this CTF challenge yourself *stop* reading here.
 
+<!--more-->
 
 ### Analysis ###
 
