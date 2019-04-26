@@ -1,7 +1,7 @@
 ---
 title: "CyBearsCTF 2019: Block Dude Writeup"
 categories:
-  - CTF Writup
+  - CTF-Writeup
 tags:
   - CTF
   - Writeup
