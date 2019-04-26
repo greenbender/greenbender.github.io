@@ -16,7 +16,7 @@ Block Dude is a simple pygame.
 We aren't told much about the game but are supplied with a tarball containing
 the following:
 
-```bash
+```console
 $ tar -tf handout.tar.gz
 ./
 ./tiles/
@@ -34,7 +34,7 @@ $ tar -tf handout.tar.gz
 
 And instructions for spawning the game:
 
-```bash
+```console
 python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
 ```
 
@@ -146,7 +146,7 @@ This is a shared library that is loaded by the server-side of the game. It
 implements functions that are defined in `blockdude.h` and is the complied
 version of `client.c` plus some more stuff, as can be seen here:
 
-```bash
+```console
 $ nm libblock_dude.so 
          U __assert_fail
 00003000 B __bss_start
@@ -183,7 +183,7 @@ Of particular interest here is the `debug_flag` function. Heres the flag. I
 take a quick look just in case... but it reads the flag from a file called
 `flag.txt` on the server.
 
-```asm
+```nasm
 .text:00000C79 ; void debug_flag()
 .text:00000C79                 public debug_flag
 .text:00000C79 debug_flag      proc near
@@ -299,7 +299,7 @@ Heres the plan: Spawn 10 blocks minimum, move blocks 9 and 10 so they point at
 
 So how can I reliably set the return address?
 
-```asm
+```nasm
 .text:00000C48 ; void __cdecl client_game(i32 socket)
 .text:00000C48                 public client_game
 .text:00000C48 client_game     proc near
