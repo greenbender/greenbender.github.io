@@ -39,7 +39,9 @@ Instructions:
 python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
 ```
 
-{% include figure image_path="/assets/images/blockdude-start.png" alt="Block Dude UI" caption="Block Dude pygame UI" %}
+Game UI:
+
+![Block Dude UI](/assests/images/blockdude-start.png "Block Dude pygame UI")
 
 If you want to attempt this CTF challenge yourself *stop* reading here.
 
