@@ -34,7 +34,9 @@ $ tar -tf handout.tar.gz
 
 And instructions for spawning the game:
 
-    python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
+```bash
+python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
+```
 
 Unfortunately at the time of writing I don't have access to the server, and I
 didn't keep any screenshots during the CTF so I can't show images of the game.
@@ -69,31 +71,35 @@ OK this appears to be a header for the server-side portion of the game.
 
 There is a an extern for the map state global.
 
-    extern u8 gMAP[MAP_Y][MAP_X];
+```c
+extern u8 gMAP[MAP_Y][MAP_X];
+```
 
 And the game state struct.
 
-    typedef struct State_t State;
-    typedef void (*update_t)(State *);
+```c
+typedef struct State_t State;
+typedef void (*update_t)(State *);
 
-    typedef struct Block_t {
-        u8 x;
-        u8 y;
-    } Block;
+typedef struct Block_t {
+    u8 x;
+    u8 y;
+} Block;
 
-    struct State_t {
-        u8 num_blocks;
-        u8 cur_block;
-        u8 has_block;
-        u8 y;
-        u8 x;
-        i8 dir;
-        char cmd;
-        u8 success;
-        update_t update;
-        // TODO: is 8 blocks enough?
-        Block blocks[8];
-    };
+struct State_t {
+    u8 num_blocks;
+    u8 cur_block;
+    u8 has_block;
+    u8 y;
+    u8 x;
+    i8 dir;
+    char cmd;
+    u8 success;
+    update_t update;
+    // TODO: is 8 blocks enough?
+    Block blocks[8];
+};
+```
 
 This struct is very suspect, it has so much potential. Integer overflow for the
 `u8`'s, negative index into `blocks` and maybe I can modify the `update`
@@ -113,15 +119,17 @@ client.c). We can see that is implementing functions defined in the
 
 A quick browse through the source code and I see this
 
-    void update_south(State *state)
-    {
-        // ...
-        // Pickup Box if not carrying and there is a free block in front
-        // plus special case for spawn box
-        else if ((!state->has_block && horizontal == TILE_BLOCK && diagonal != TILE_BLOCK) ||
-                 (state->x == 1 && state->y == 1 && state->dir == DIR_RIGHT))
-        // ...
-    }
+```c
+void update_south(State *state)
+{
+    // ...
+    // Pickup Box if not carrying and there is a free block in front
+    // plus special case for spawn box
+    else if ((!state->has_block && horizontal == TILE_BLOCK && diagonal != TILE_BLOCK) ||
+             (state->x == 1 && state->y == 1 && state->dir == DIR_RIGHT))
+    // ...
+}
+```
 
 What! Thats how you pickup a block! Just stand next to the block on the screen
 and press down. Feeling pretty stupid right now. Time to play the game again
@@ -138,52 +146,56 @@ This is a shared library that is loaded by the server-side of the game. It
 implements functions that are defined in `blockdude.h` and is the complied
 version of `client.c` plus some more stuff, as can be seen here:
 
-    $ nm libblock_dude.so 
-             U __assert_fail
-    00003000 B __bss_start
-    00000c48 T client_game
-             U close
-    00000c79 T debug_flag
-    00002f78 d _DYNAMIC
-    00003000 B _edata
-    000033a4 B _end
-             U exit
-    000006f0 T game_complete
-    00000cef T get_block_at
-    00000dbb T get_block_index
-    00003020 B gMAP
-    00001142 T load_map
-    00000b40 T main_loop
-             U memset
-             U open
-    00000e35 T output_window
-    000006a0 T parse_command
-    00001258 r __PRETTY_FUNCTION__.2924
-             U read
-             U recv
-             U send
-    00003000 B SOCKET
-    00000b2a T update_east
-    00000a2a T update_horizontal
-    00000719 T update_north
-    00000802 T update_south
-    00000b14 T update_west
+```bash
+$ nm libblock_dude.so 
+         U __assert_fail
+00003000 B __bss_start
+00000c48 T client_game
+         U close
+00000c79 T debug_flag
+00002f78 d _DYNAMIC
+00003000 B _edata
+000033a4 B _end
+         U exit
+000006f0 T game_complete
+00000cef T get_block_at
+00000dbb T get_block_index
+00003020 B gMAP
+00001142 T load_map
+00000b40 T main_loop
+         U memset
+         U open
+00000e35 T output_window
+000006a0 T parse_command
+00001258 r __PRETTY_FUNCTION__.2924
+         U read
+         U recv
+         U send
+00003000 B SOCKET
+00000b2a T update_east
+00000a2a T update_horizontal
+00000719 T update_north
+00000802 T update_south
+00000b14 T update_west
+```
 
 Of particular interest here is the `debug_flag` function. Heres the flag. I
 take a quick look just in case... but it reads the flag from a file called
 `flag.txt` on the server.
 
-    .text:00000C79 ; void debug_flag()
-    .text:00000C79                 public debug_flag
-    .text:00000C79 debug_flag      proc near
-    .text:00000C79
-    .text:00000C79 c               = byte ptr -5
-    .text:00000C79 fd              = dword ptr -4
-    .text:00000C79
-    .text:00000C79                 sub     esp, 8
-    .text:00000C7C                 push    0               ; oflag
-    .text:00000C7E                 push    offset file     ; "flag.txt"
-    .text:00000C83                 call    open
+```asm
+.text:00000C79 ; void debug_flag()
+.text:00000C79                 public debug_flag
+.text:00000C79 debug_flag      proc near
+.text:00000C79
+.text:00000C79 c               = byte ptr -5
+.text:00000C79 fd              = dword ptr -4
+.text:00000C79
+.text:00000C79                 sub     esp, 8
+.text:00000C7C                 push    0               ; oflag
+.text:00000C7E                 push    offset file     ; "flag.txt"
+.text:00000C83                 call    open
+```
 
 So to get the flag I need to call this function. Looking at the disassembly it
 seems there is no path that calls this function. I need to expoit a
@@ -196,12 +208,14 @@ Time to take a look at how that dodgey State struct is used.
 
 Its allocated on the stack in the `main_loop` function.
 
-    void main_loop(void)
-    {
-        State state;
-        memset(&state, 0, sizeof(state));
-        // ...
-    }
+```c
+void main_loop(void)
+{
+    State state;
+    memset(&state, 0, sizeof(state));
+    // ...
+}
+```
 
 Nice... and hey it's the *only* stack allocation in this function. That means
 that the return address for `main_loop` is right below it on the stack. That
@@ -212,35 +226,37 @@ to `debug_flag`.
 So how do I overflow `blocks`? The only place it is used is in the
 `update_south` function.
 
-    void update_south(State *state)
+```c
+void update_south(State *state)
+{
+    // ...
+    // Drop Box
+    // ...
+        state->blocks[state->cur_block].y = height + 1;
+        state->blocks[state->cur_block].x = state->x + state->dir;
+        state->has_block = 0;
+    // ...
+
+    // Pickup Box if not carrying and there is a free block in front
+    // plus special case for spawn box
+    else if ((!state->has_block && horizontal == TILE_BLOCK && diagonal != TILE_BLOCK) ||
+             (state->x == 1 && state->y == 1 && state->dir == DIR_RIGHT))
     {
-        // ...
-        // Drop Box
-        // ...
-            state->blocks[state->cur_block].y = height + 1;
-            state->blocks[state->cur_block].x = state->x + state->dir;
-            state->has_block = 0;
-        // ...
-
-        // Pickup Box if not carrying and there is a free block in front
-        // plus special case for spawn box
-        else if ((!state->has_block && horizontal == TILE_BLOCK && diagonal != TILE_BLOCK) ||
-                 (state->x == 1 && state->y == 1 && state->dir == DIR_RIGHT))
+        u8 index = 0;
+        if (state->x == 1 && state->y == 1 && state->dir == DIR_RIGHT)
         {
-            u8 index = 0;
-            if (state->x == 1 && state->y == 1 && state->dir == DIR_RIGHT)
-            {
-                // TODO: do newly spawned boxes need to be initialized?
-                index = state->num_blocks++;
-            }
-            else {
-                index = get_block_index(state->x+state->dir, state->y, state);
-            }
-
-            state->has_block = 1;
-            state->cur_block = index;
+            // TODO: do newly spawned boxes need to be initialized?
+            index = state->num_blocks++;
         }
+        else {
+            index = get_block_index(state->x+state->dir, state->y, state);
+        }
+
+        state->has_block = 1;
+        state->cur_block = index;
     }
+}
+```
 
 Analysing this function I see that when dropping a block the `cur_block` member
 is used to index into `blocks` and set the `x` and `y` coordinates of the block
@@ -283,56 +299,60 @@ Heres the plan: Spawn 10 blocks minimum, move blocks 9 and 10 so they point at
 
 So how can I reliably set the return address?
 
-    .text:00000C48 ; void __cdecl client_game(i32 socket)
-    .text:00000C48                 public client_game
-    .text:00000C48 client_game     proc near
-    .text:00000C48
-    .text:00000C48 pad             = byte ptr -404h
-    .text:00000C48 socket          = dword ptr  4
-    .text:00000C48
-    .text:00000C48                 push    edi
-    .text:00000C49                 sub     esp, 400h
-    .text:00000C4F                 mov     edx, esp
-    .text:00000C51                 mov     eax, 0
-    .text:00000C56                 mov     ecx, 100h
-    .text:00000C5B                 mov     edi, edx
-    .text:00000C5D                 rep stosd
-    .text:00000C5F                 mov     eax, [esp+404h+socket]
-    .text:00000C66                 mov     ds:_edata, eax
-    .text:00000C6B                 call    main_loop
-    .text:00000C70                 nop
-    .text:00000C71                 add     esp, 400h
-    .text:00000C77                 pop     edi
-    .text:00000C78                 retn
-    .text:00000C78 client_game     endp
-    .text:00000C78
-    .text:00000C79
-    .text:00000C79 ; =============== S U B R O U T I N E =======================================
-    .text:00000C79
-    .text:00000C79
-    .text:00000C79 ; void debug_flag()
-    .text:00000C79                 public debug_flag
-    .text:00000C79 debug_flag      proc near
-    .text:00000C79
-    .text:00000C79 c               = byte ptr -5
-    .text:00000C79 fd              = dword ptr -4
-    .text:00000C79
-    .text:00000C79                 sub     esp, 8
+```asm
+.text:00000C48 ; void __cdecl client_game(i32 socket)
+.text:00000C48                 public client_game
+.text:00000C48 client_game     proc near
+.text:00000C48
+.text:00000C48 pad             = byte ptr -404h
+.text:00000C48 socket          = dword ptr  4
+.text:00000C48
+.text:00000C48                 push    edi
+.text:00000C49                 sub     esp, 400h
+.text:00000C4F                 mov     edx, esp
+.text:00000C51                 mov     eax, 0
+.text:00000C56                 mov     ecx, 100h
+.text:00000C5B                 mov     edi, edx
+.text:00000C5D                 rep stosd
+.text:00000C5F                 mov     eax, [esp+404h+socket]
+.text:00000C66                 mov     ds:_edata, eax
+.text:00000C6B                 call    main_loop
+.text:00000C70                 nop
+.text:00000C71                 add     esp, 400h
+.text:00000C77                 pop     edi
+.text:00000C78                 retn
+.text:00000C78 client_game     endp
+.text:00000C78
+.text:00000C79
+.text:00000C79 ; =============== S U B R O U T I N E =======================================
+.text:00000C79
+.text:00000C79
+.text:00000C79 ; void debug_flag()
+.text:00000C79                 public debug_flag
+.text:00000C79 debug_flag      proc near
+.text:00000C79
+.text:00000C79 c               = byte ptr -5
+.text:00000C79 fd              = dword ptr -4
+.text:00000C79
+.text:00000C79                 sub     esp, 8
+```
 
 The function that calls `main_loop` is `client_game`. Hey... it also seems to be
 'allocating' 1024 bytes on the stack and zeroing it, then not using it at all!
 Lets draw the stack for `main_loop`
 
-    +---------------------------+
-    +                           +
-    +     State                 +  <-- Game state
-    +                           +
-    +---------------------------+
-    +     return address        +  <-- Return to `client_game`
-    +---------------------------+
-    +                           +
-    +     1024 bytes of zeros   +
-    +---------------------------+
+```
++---------------------------+
++                           +
++     State                 +  <-- Game state
++                           +
++---------------------------+
++     return address        +  <-- Return to `client_game`
++---------------------------+
++                           +
++     1024 bytes of zeros   +
++---------------------------+
+```
  
 This means that there is 1K of slack space after the return address that won't
 affect the process if it is modified. I can use this space to spawn up to 512
@@ -392,51 +412,53 @@ So heres how the game went:
 
 Heres the ascii art version (kind of):
 
-    Legend:
-    # = block
-    { = door
-    _ and | = floor and wall
+```
+Legend:
+# = block
+{ = door
+_ and | = floor and wall
 
-    After spawning 11 blocks:
+After spawning 11 blocks:
 
-                                                              # <-- block 10
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-                                                        # <-- block 9       
-                            |                                               
-                            |                      |                        
-                            |                      |                        
-    {_______________________|______________________|_______________________#
-
-
-    After building the ramps:
-
-                                                              # <-- block 10
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-                                                        # <-- block 9       
-                            |                  ##       ##                  
-                            |#                 ### |    ###                 
-                            |##                ####|#   ####                
-    {_______________________|###_______________####|##__#####______________#
+                                                          # <-- block 10
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                    # <-- block 9       
+                        |                                               
+                        |                      |                        
+                        |                      |                        
+{_______________________|______________________|_______________________#
 
 
-    After moving block nine:
+After building the ramps:
 
-                                                              # <-- block 10
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-                                               # <-- block 9                
-                            |                  ##       ##                  
-                            |#                 ### |    ###                 
-                            |##                ####|#   ####                
-    {_______________________|###_______________####|##__#####______________#
+                                                          # <-- block 10
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                    # <-- block 9       
+                        |                  ##       ##                  
+                        |#                 ### |    ###                 
+                        |##                ####|#   ####                
+{_______________________|###_______________####|##__#####______________#
 
 
-    Now just walk out the door and win.
+After moving block nine:
+
+                                                          # <-- block 10
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                           # <-- block 9                
+                        |                  ##       ##                  
+                        |#                 ### |    ###                 
+                        |##                ####|#   ####                
+{_______________________|###_______________####|##__#####______________#
+
+
+Now just walk out the door and win.
+```
