@@ -391,14 +391,14 @@ So heres how the game went:
 
 1. Move to the spawn block.
 
-  ![Start](/assets/images/blockdude-start.png "Start")
+    ![Start](/assets/images/blockdude-start.png "Start")
 
 2. Spawn 11 blocks (9 and 10) end up floating in the air.
     * I didn't at the time, but I could have used blocks 1 through 8 to start
       building stairs overs the walls. This doesn't really matter though. I
       still had plenty of blocks to spare.
 
-  ![Leak](/assets/images/blockdude-leak.png "Leak")
+    ![Leak](/assets/images/blockdude-leak.png "Leak")
 
 3. Leave the floating blocks alone.
 
@@ -413,7 +413,7 @@ So heres how the game went:
 
 6. Spawn blocks one at a time to build a ramp that allows me to pick up block nine.
 
-  ![Ramps](/assets/images/blockdude-ramps.png "Ramps")
+    ![Ramps](/assets/images/blockdude-ramps.png "Ramps")
 
 7. Pickup block 9.
 
@@ -422,12 +422,12 @@ So heres how the game went:
 9. Drop block nine. It should now be at the same height it was originally and
    exactly nine places to the left.
 
-  ![Patch](/assets/images/blockdude-patched.png "Patch")
+    ![Patch](/assets/images/blockdude-patched.png "Patch")
 
 10. Walk to the exit door.
 
-  ![Exit](/assets/images/blockdude-exit.png "Exit")
+    ![Exit](/assets/images/blockdude-exit.png "Exit")
 
 11. *WIN*!! The flag is displayed in the pygame debug/error window.
 
-  ![Win](/assets/images/blockdude-win.png "Win")
+    ![Win](/assets/images/blockdude-win.png "Win")
