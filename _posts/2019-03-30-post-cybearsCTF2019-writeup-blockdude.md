@@ -16,19 +16,21 @@ Block Dude is a simple pygame.
 We aren't told much about the game but are supplied with a tarball containing
 the following:
 
-    $ tar -tf handout.tar.gz
-    ./
-    ./tiles/
-    ./tiles/wall.png
-    ./tiles/door.png
-    ./tiles/right.png
-    ./tiles/empty.png
-    ./tiles/left.png
-    ./tiles/block.png
-    ./client.c
-    ./blockdude.h
-    ./BlockDude.py
-    ./libblock_dude.so
+```bash
+$ tar -tf handout.tar.gz
+./
+./tiles/
+./tiles/wall.png
+./tiles/door.png
+./tiles/right.png
+./tiles/empty.png
+./tiles/left.png
+./tiles/block.png
+./client.c
+./blockdude.h
+./BlockDude.py
+./libblock_dude.so
+```
 
 And instructions for spawning the game:
 
