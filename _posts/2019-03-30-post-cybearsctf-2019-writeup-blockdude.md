@@ -1,5 +1,5 @@
 ---
-title: "cybearsCTF 2019: Block Dude Writeup"
+title: "CyBearsCTF 2019: Block Dude Writeup"
 categories:
   - CTF Writup
 tags:
@@ -282,9 +282,9 @@ locations of the floating blocks changes so we can't just overwrite the return
 address with a static value. They also always land in the game windows (well
 done to the designers of the CTF challenge, thats very neat!)
 
-Modifying the return address of `main_loop` should a simple matter of picking
-up blocks 9 and 10 and dropping them somewhere else. May as well give this a
-go.
+Modifying the return address of `main_loop` should a be simple matter of
+picking up blocks 9 and 10 and dropping them somewhere else. May as well give
+this a go.
 
 So I spin up the game again and when box 9 spawns I move the character to a
 random location and drop the block. Then finish the game (the main loop returns
@@ -377,7 +377,8 @@ member of that block is the low byte of the return address. So all I have to
 do is increment `x` by 9 to point to `debug_flag` and moving the block nine
 places to the left does exactly this!
 
-Oh and I have up to ~~512 extra~~ 254 blocks available to help me with moving the block.
+Oh and I have up to ~~512 extra~~ 254 blocks available to help me with moving
+the block.
 
 
 ### Getting the flag ###
@@ -403,15 +404,16 @@ So heres how the game went:
 3. Leave the floating blocks alone.
 
 4. Spawn blocks one at a time to build stairs over the walls in such a way that
-   I can walk back and forward across the map enough to go to and from block 9, 9
-   places to the left of block 9, and the spawn block. Also make sure I can get
-   the exit door.
+   I can walk back and forward across the map enough to go to and from block 9,
+   9 places to the left of block 9, and the spawn block. Also make sure I can
+   get the exit door.
 
 5. Spawn blocks one at a time to build a ramp whos top level is two blocks
    wide, one block lower than block nine, and ends nine places to the left of
    block 9.
 
-6. Spawn blocks one at a time to build a ramp that allows me to pick up block nine.
+6. Spawn blocks one at a time to build a ramp that allows me to pick up block
+   nine.
 
     ![Ramps](/assets/images/blockdude-ramps.png "Ramps")
 
