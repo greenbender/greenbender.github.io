@@ -15,6 +15,8 @@ CyBears. It appears to be a simple pygame. We are given a tarball with some
 source, a shared object and some game resources, along with a simple
 commandline to spawn the game. OK so lets get the flag.
 
+![Block Dude UI](/assets/images/blockdude-start.png "Block Dude pygame UI")
+
 Tarball contents:
 
 ```console
@@ -38,10 +40,6 @@ Instructions:
 ```console
 python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
 ```
-
-Game UI:
-
-![Block Dude UI](/assets/images/blockdude-start.png "Block Dude pygame UI")
 
 If you want to attempt this CTF challenge yourself *stop* reading here.
 
@@ -277,6 +275,8 @@ after block 11 is spawned I have two floating blocks. The location of these two
 floating blocks is actually telling me the return address of the `main_loop`
 function!
 
+![Info Leak](/assets/images/blockdude-leak.png "Info Leak")
+
 It is also interesting to note that after doing this several times the
 locations of the floating blocks changes so we can't just overwrite the return
 address with a static value. They also always land in the game windows (well
@@ -390,75 +390,44 @@ decided to have one shot at playing the game out.
 So heres how the game went:
 
 1. Move to the spawn block.
+
+![Start](/assets/images/blockdude-start.png "Start")
+
 2. Spawn 11 blocks (9 and 10) end up floating in the air.
     * I didn't at the time, but I could have used blocks 1 through 8 to start
       building stairs overs the walls. This doesn't really matter though. I
       still had plenty of blocks to spare.
+
+![Leak](/assets/images/blockdude-leak.png "Leak")
+
 3. Leave the floating blocks alone.
+
 4. Spawn blocks one at a time to build stairs over the walls in such a way that
    I can walk back and forward across the map enough to go to and from block 9, 9
    places to the left of block 9, and the spawn block. Also make sure I can get
    the exit door.
+
 5. Spawn blocks one at a time to build a ramp whos top level is two blocks
    wide, one block lower than block nine, and ends nine places to the left of
    block 9.
+
 6. Spawn blocks one at a time to build a ramp that allows me to pick up block nine.
+
+![Ramps](/assets/images/blockdude-ramps.png "Ramps")
+
 7. Pickup block 9.
+
 8. Move to the top of the first ramp I created.
+
 9. Drop block nine. It should now be at the same height it was originally and
    exactly nine places to the left.
+
+![Patch](/assets/images/blockdude-patched.png "Patch")
+
 10. Walk to the exit door.
+
+![Exit](/assets/images/blockdude-exit.png "Exit")
+
 11. *WIN*!! The flag is displayed in the pygame debug/error window.
 
-Heres the ascii art version (kind of):
-
-```
-Legend:
-# = block
-{ = door
-_ and | = floor and wall
-
-After spawning 11 blocks:
-
-                                                          # <-- block 10
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                                    # <-- block 9       
-                        |                                               
-                        |                      |                        
-                        |                      |                        
-{_______________________|______________________|_______________________#
-
-
-After building the ramps:
-
-                                                          # <-- block 10
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                                    # <-- block 9       
-                        |                  ##       ##                  
-                        |#                 ### |    ###                 
-                        |##                ####|#   ####                
-{_______________________|###_______________####|##__#####______________#
-
-
-After moving block nine:
-
-                                                          # <-- block 10
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                           # <-- block 9                
-                        |                  ##       ##                  
-                        |#                 ### |    ###                 
-                        |##                ####|#   ####                
-{_______________________|###_______________####|##__#####______________#
-
-
-Now just walk out the door and win.
-```
+![Win](/assets/images/blockdude-win.png "Win")
