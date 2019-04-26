@@ -39,9 +39,7 @@ Instructions:
 python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
 ```
 
-Unfortunately at the time of writing I don't have access to the server, and I
-didn't keep any screenshots during the CTF so I can't show images of the game.
-I'll address this when Cybears release the CTF publicly.
+{% include figure image_path="/assets/images/blockdude-start.png" alt="Block Dude UI" caption="Block Dude pygame UI" %}
 
 If you want to attempt this CTF challenge yourself *stop* reading here.
 
