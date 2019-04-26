@@ -1,20 +1,21 @@
 ---
 title: "cybearsCTF 2019: Block Dude Writeup"
-excerpt_separator: "<!--more-->"
 categories:
-  - CTF
-  - Writeup
+  - CTF Writup
 tags:
   - CTF
   - Writeup
+  - BSides
   - cybearsCTF
   - Block Dude
 ---
 
-Block Dude is a simple pygame.
+Block Dude was one of the CTF challenges on offer at BSidesCBR 2019, hosted by
+CyBears. It appears to be a simple pygame. We are given a tarball with some
+source, a shared object and some game resources, along with a simple
+commandline to spawn the game. OK so lets get the flag.
 
-We aren't told much about the game but are supplied with a tarball containing
-the following:
+Tarball contents:
 
 ```console
 $ tar -tf handout.tar.gz
@@ -32,7 +33,7 @@ $ tar -tf handout.tar.gz
 ./libblock_dude.so
 ```
 
-And instructions for spawning the game:
+Instructions:
 
 ```console
 python3 BlockDude.py --port 31337 block-dude.chal.cybears.io
@@ -43,8 +44,6 @@ didn't keep any screenshots during the CTF so I can't show images of the game.
 I'll address this when Cybears release the CTF publicly.
 
 If you want to attempt this CTF challenge yourself *stop* reading here.
-
-<!--more-->
 
 ### Analysis ###
 
