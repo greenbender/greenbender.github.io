@@ -57,6 +57,12 @@ plugins:
   - jemoji
   - jekyll-include-cache
 
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "UA-139191336-1"
+    anonymize_ip: false # default
+
 author:
   name   : "greenbender"
   avatar : "/assets/images/bio-photo.jpg"
